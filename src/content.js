@@ -33,8 +33,4 @@ function start() {
   });
 }
 
-if (typeof module === "object" && module.exports) {
-  module.exports = { revealDownloadButton, revealDownloadButtons };
-} else {
-  start();
-}
+start();

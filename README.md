@@ -32,9 +32,8 @@
 
 ## 使用
 
-1. 登录西湖大学教学系统。
-2. 打开课程列表中的“教学大纲”。
-3. 在 PDF 预览器工具栏中点击“下载教学大纲”。
+1. 打开课程列表中的“教学大纲”。
+2. 在 PDF 预览器工具栏中点击“下载教学大纲”。
 
 下载由 PDF.js 和 Chrome 原生下载流程处理。
 
@@ -55,30 +54,22 @@ https://ams.westlake.edu.cn/onlinefile/pdfjs/web/viewer.html*
 
 ## 开发
 
-### 环境要求
-
-- Chrome 或其他支持 Manifest V3 的 Chromium 浏览器
-- Node.js 18 或更高版本（仅用于运行测试）
-
 ### 项目结构
 
 ```text
 .
 ├── manifest.json          # Chrome 扩展清单
-├── package.json           # 测试命令
-├── src/
-│   └── content.js         # 恢复 PDF.js 下载按钮
-└── test/
-    └── content.test.js    # 核心逻辑测试
+└── src/
+    └── content.js         # 恢复 PDF.js 下载按钮
 ```
 
-### 运行测试
+项目没有构建步骤或第三方依赖。修改 `src/content.js` 后，在 `chrome://extensions/` 中重新加载扩展即可。
 
-```bash
-npm test
-```
+### 手动验证
 
-项目没有需要安装的 npm 依赖。
+1. 打开一个教学大纲预览。
+2. 确认工具栏出现“下载教学大纲”按钮。
+3. 点击按钮并确认 PDF 可以正常保存。
 
 ## 故障排查
 
@@ -101,11 +92,7 @@ npm test
 
 ## 贡献
 
-欢迎提交 Issue 或 Pull Request。提交代码前请先运行：
-
-```bash
-npm test
-```
+欢迎提交 Issue 或 Pull Request。请在 Pull Request 中简要说明改动内容和手动验证结果。
 
 ## 许可证
 
