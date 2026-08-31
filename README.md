@@ -2,6 +2,7 @@
 
 [![Chrome](https://img.shields.io/badge/Chrome-Manifest%20V3-4285F4?logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3)
 [![Version](https://img.shields.io/badge/version-0.1.0-blue)](manifest.json)
+[![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
 为西湖大学教学系统恢复教学大纲 PDF 下载按钮的 Chrome 扩展。
 
@@ -38,12 +39,6 @@
 下载由 PDF.js 和 Chrome 原生下载流程处理。
 
 ## 权限与隐私
-
-扩展只匹配以下页面：
-
-```text
-https://ams.westlake.edu.cn/onlinefile/pdfjs/web/viewer.html*
-```
 
 扩展不会：
 
@@ -84,11 +79,6 @@ https://ams.westlake.edu.cn/onlinefile/pdfjs/web/viewer.html*
 
 确认教学大纲已经在预览器中正常加载。如果 PDF 本身无法显示，本扩展也无法获取该文件。
 
-## 已知限制
-
-- 仅适配当前的西湖大学教学系统 PDF.js 预览地址和控件结构。
-- 如果教学系统更改域名、预览路径或 PDF.js 页面结构，扩展可能需要更新。
-- 扩展不会让当前账号无权访问的教学大纲变得可访问。
 
 ## 贡献
 
@@ -96,4 +86,4 @@ https://ams.westlake.edu.cn/onlinefile/pdfjs/web/viewer.html*
 
 ## 许可证
 
-本项目暂未添加开源许可证。公开发布前请根据你的发布计划选择并添加 `LICENSE` 文件。
+本项目采用 [MIT License](LICENSE)。
