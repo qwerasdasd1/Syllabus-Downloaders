@@ -1,10 +1,12 @@
 # Westlake Syllabus Downloader
 
-[![Chrome](https://img.shields.io/badge/Chrome-Manifest%20V3-4285F4?logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3)
-[![Version](https://img.shields.io/badge/version-0.1.0-blue)](manifest.json)
-[![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
+<p align="center">
+  <a href="https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3"><img src="https://img.shields.io/badge/Chrome-Manifest%20V3-4285F4?logo=googlechrome&amp;logoColor=white" alt="Chrome Manifest V3"></a>
+  <a href="manifest.json"><img src="https://img.shields.io/badge/version-0.1.0-blue" alt="Version 0.1.0"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="MIT License"></a>
+</p>
 
-为西湖大学教学系统恢复教学大纲 PDF 下载按钮的 Chrome 扩展。
+为恢复教学大纲 PDF 下载按钮的 Chrome 扩展。
 
 > 本项目是非官方工具，与西湖大学及其教学系统开发方无关。
 
