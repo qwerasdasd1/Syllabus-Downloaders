@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "西湖教学大纲下载器",
+  "version": "0.1.0",
+  "description": "在西湖大学教学系统的教学大纲预览器中恢复下载按钮。",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://ams.westlake.edu.cn/onlinefile/pdfjs/web/viewer.html*"
+      ],
+      "js": [
+        "src/content.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_idle"
+    }
+  ]
+}
