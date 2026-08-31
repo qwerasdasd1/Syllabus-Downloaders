@@ -1,4 +1,4 @@
-# Westlake Syllabus Downloader
+<h1 align="center">Westlake Syllabus Downloader</h1>
 
 <p align="center">
   <a href="https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3"><img src="https://img.shields.io/badge/Chrome-Manifest%20V3-4285F4?logo=googlechrome&amp;logoColor=white" alt="Chrome Manifest V3"></a>
