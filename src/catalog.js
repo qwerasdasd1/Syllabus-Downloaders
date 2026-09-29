@@ -8,27 +8,33 @@
   const root = document.createElement("details");
   root.id = "westlake-course-catalog";
   root.innerHTML = `
-    <summary>查询未选课程的大纲</summary>
+    <summary>查询未选课程的大纲<span class="wsd-catalog-expand" aria-hidden="true">展开</span><span class="wsd-catalog-collapse" aria-hidden="true">收起</span></summary>
     <div class="wsd-catalog-body">
-      <p>按课程名、代码或任课教师查找其他课程的大纲。已选课程仍使用原来的“全部课程”入口。</p>
       <form class="wsd-catalog-source">
-        <label>选课批次 <input name="turn" value="121" aria-label="选课批次编号或历史选课链接" required></label>
+        <label>学期 <select name="catalog" aria-label="课程目录学期"></select></label>
         <button type="submit">加载课程目录</button>
       </form>
-      <p class="wsd-catalog-hint">已核对：批次 121 对应 2026 年第 1 学期。其他学期可填写对应批次编号，或粘贴之前的选课页面链接。</p>
-      <label class="wsd-catalog-search">查找课程
-        <input name="query" type="search" placeholder="课程名称、代码或教师姓名" disabled>
-      </label>
-      <p class="wsd-catalog-status" role="status" aria-live="polite">先加载课程目录，再选择要查看的大纲。文件是否可读以教学系统返回结果为准。</p>
-      <div class="wsd-catalog-results"></div>
+      <div id="wsd-catalog-content" hidden>
+        <label class="wsd-catalog-search">查找课程
+          <input name="query" type="search" placeholder="课程名称、代码或教师姓名" disabled>
+        </label>
+        <p class="wsd-catalog-status" role="status" aria-live="polite"></p>
+        <div class="wsd-catalog-results"></div>
+      </div>
     </div>`;
   document.body.prepend(root);
 
   const api = WestlakeSyllabusCatalog;
   const form = root.querySelector("form");
-  const turnInput = root.querySelector('[name="turn"]');
+  const catalogSelect = root.querySelector('[name="catalog"]');
+  for (const { id, label } of api.listCatalogs()) {
+    const option = cell("option", label);
+    option.value = id;
+    catalogSelect.append(option);
+  }
   const queryInput = root.querySelector('[name="query"]');
-  const submit = form.querySelector("button");
+  const submit = form.querySelector('[type="submit"]');
+  const content = root.querySelector("#wsd-catalog-content");
   const status = root.querySelector('[role="status"]');
   const results = root.querySelector(".wsd-catalog-results");
   let lessons = [];
@@ -40,6 +46,18 @@
     node.textContent = text;
     return node;
   }
+
+  catalogSelect.addEventListener("change", () => {
+    controller?.abort();
+    syllabusController?.abort();
+    lessons = [];
+    results.replaceChildren();
+    queryInput.value = "";
+    queryInput.disabled = true;
+    status.textContent = "";
+    submit.disabled = false;
+    content.hidden = true;
+  });
 
   function render() {
     syllabusController?.abort();
@@ -114,15 +132,14 @@
     queryInput.disabled = true;
     lessons = [];
     results.replaceChildren();
+    content.hidden = false;
     status.textContent = "正在加载课程目录…";
     try {
-      const turn = api.parseTurn(turnInput.value);
-      turnInput.value = turn;
-      lessons = await api.loadCatalog(turn, request.signal);
+      lessons = await api.loadCatalog(catalogSelect.value, request.signal);
       if (request.signal.aborted) return;
       queryInput.disabled = false;
       render();
-      queryInput.focus();
+      if (root.open) queryInput.focus();
     } catch (error) {
       if (!request.signal.aborted) status.textContent = error.message;
     } finally {

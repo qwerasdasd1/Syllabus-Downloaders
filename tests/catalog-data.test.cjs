@@ -9,12 +9,16 @@ afterEach(() => { global.fetch = originalFetch; });
 const lesson = { id: 2597, courseCode: "MATH2003", courseName: "抽象代数（上）|Abstract Algebra I", teacherName: "示例教师", lessonCode: "2610_MATH2003_example" };
 const json = body => new Response(JSON.stringify(body));
 
-test("a historical selection URL yields only its batch number", () => {
-  assert.equal(api.parseTurn(" 121 "), "121");
-  assert.equal(api.parseTurn("https://ams.westlake.edu.cn/course-selection/?token=example#/course-select/1/turn/121/select"), "121");
-  for (const value of ["", "0", "-1", "121/../122", "1e3", "https://example.com/"]) {
-    assert.throws(() => api.parseTurn(value), /批次/);
+test("only verified semester choices can load a catalog", async () => {
+  assert.deepEqual(api.listCatalogs(), [{ id: "2026-1", label: "2026 年第 1 学期" }]);
+  api.listCatalogs()[0].id = "changed";
+  assert.equal(api.listCatalogs()[0].id, "2026-1");
+  let calls = 0;
+  global.fetch = async () => { calls++; };
+  for (const value of ["", "121", "2025-1", "121/../122"]) {
+    await assert.rejects(api.loadCatalog(value), /请选择可用的课程目录/);
   }
+  assert.equal(calls, 0);
 });
 
 test("all published index chunks load and duplicate teaching classes merge", async () => {
@@ -27,7 +31,7 @@ test("all published index chunks load and duplicate teaching classes merge", asy
     if (url.pathname.endsWith("part-a.json")) return json({ data: JSON.stringify([lesson]) });
     return json({ data: JSON.stringify([lesson, { ...lesson, id: 2598, lessonCode: "second-class" }]) });
   };
-  assert.equal((await api.loadCatalog("121")).length, 2);
+  assert.equal((await api.loadCatalog("2026-1")).length, 2);
   assert.deepEqual(requested, [
     "/simplest-lessons/static/lessons/121/version.json",
     "/simplest-lessons/static/lessons/121/part-a.json",
@@ -38,10 +42,10 @@ test("all published index chunks load and duplicate teaching classes merge", asy
 test("unexpected catalog paths and broken content fail without extra requests", async () => {
   let calls = 0;
   global.fetch = async () => { calls++; return json({ itemList: ["../../private"] }); };
-  await assert.rejects(api.loadCatalog("121"), /索引格式/);
+  await assert.rejects(api.loadCatalog("2026-1"), /索引格式/);
   assert.equal(calls, 1);
   global.fetch = async url => url.pathname.endsWith("version.json") ? json({ itemList: ["part"] }) : json({ data: "not-json" });
-  await assert.rejects(api.loadCatalog("121"), /内容格式/);
+  await assert.rejects(api.loadCatalog("2026-1"), /内容格式/);
 });
 
 test("search accepts Chinese, English, codes and multiple terms", () => {

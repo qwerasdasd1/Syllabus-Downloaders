@@ -9,11 +9,14 @@
   text-align: left;
 }
 #westlake-course-catalog summary { padding: 12px 16px; cursor: pointer; font-weight: 600; }
+#westlake-course-catalog summary span { float: right; color: #075daa; font-weight: 400; }
+#westlake-course-catalog .wsd-catalog-collapse, #westlake-course-catalog[open] .wsd-catalog-expand { display: none; }
+#westlake-course-catalog[open] .wsd-catalog-collapse { display: inline; }
 #westlake-course-catalog .wsd-catalog-body { padding: 0 16px 16px; }
 #westlake-course-catalog p { margin: 8px 0; }
-#westlake-course-catalog .wsd-catalog-hint { color: #54677d; font-size: 12px; }
 #westlake-course-catalog form { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-#westlake-course-catalog input { padding: 7px 10px; margin: 4px; border: 1px solid #9bb3cd; border-radius: 4px; background: white; color: #203047; font: inherit; }
+#westlake-course-catalog input, #westlake-course-catalog select { padding: 7px 10px; margin: 4px; border: 1px solid #9bb3cd; border-radius: 4px; background: white; color: #203047; font: inherit; }
+#westlake-course-catalog [hidden] { display: none !important; }
 #westlake-course-catalog .wsd-catalog-search { display: block; }
 #westlake-course-catalog .wsd-catalog-search input { width: min(400px, 90%); }
 #westlake-course-catalog button { border: 0; border-radius: 4px; background: #075daa; color: white; padding: 7px 12px; font: inherit; cursor: pointer; }

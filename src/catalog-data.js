@@ -2,14 +2,11 @@
 
 const WestlakeSyllabusCatalog = (() => {
   const ORIGIN = "https://ams.westlake.edu.cn";
+  // Add a semester only after its published index and semester label are verified.
+  const CATALOGS = [{ id: "2026-1", label: "2026 年第 1 学期", turn: "121" }];
 
-  function parseTurn(value) {
-    const text = String(value).trim();
-    const id = /^\d+$/.test(text) ? text : text.match(/\/turn\/(\d+)\/select(?:[/?#]|$)/)?.[1];
-    if (!id || !/^[1-9]\d{0,8}$/.test(id)) {
-      throw new Error("请输入选课批次编号，或粘贴之前打开的选课页面链接。");
-    }
-    return id;
+  function listCatalogs() {
+    return CATALOGS.map(({ id, label }) => ({ id, label }));
   }
 
   async function readJSON(path, signal) {
@@ -37,8 +34,10 @@ const WestlakeSyllabusCatalog = (() => {
     }
   }
 
-  async function loadCatalog(turn, signal) {
-    const base = `/simplest-lessons/static/lessons/${parseTurn(turn)}/`;
+  async function loadCatalog(catalogId, signal) {
+    const catalog = CATALOGS.find(item => item.id === catalogId);
+    if (!catalog) throw new Error("请选择可用的课程目录。");
+    const base = `/simplest-lessons/static/lessons/${catalog.turn}/`;
     const version = await readJSON(`${base}version.json`, signal);
     if (!Array.isArray(version.itemList) || version.itemList.some(id => !/^[\w-]+$/.test(id))) {
       throw new Error("课程目录索引格式发生变化，暂时无法读取。");
@@ -94,7 +93,7 @@ const WestlakeSyllabusCatalog = (() => {
     return syllabusLinks(payload, lessonId);
   }
 
-  return { parseTurn, loadCatalog, filterLessons, syllabusLinks, loadSyllabus };
+  return { listCatalogs, loadCatalog, filterLessons, syllabusLinks, loadSyllabus };
 })();
 
 if (typeof module !== "undefined") module.exports = WestlakeSyllabusCatalog;
