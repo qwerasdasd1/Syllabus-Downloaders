@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "西湖教学大纲下载器",
-  "version": "0.1.0",
-  "description": "在西湖大学教学系统的教学大纲预览器中恢复下载按钮。",
+  "version": "0.2.2",
+  "description": "恢复教学大纲下载按钮，并在我的课表中查询未选课程的大纲。",
   "content_scripts": [
     {
       "matches": [
@@ -10,6 +10,20 @@
       ],
       "js": [
         "src/content.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://ams.westlake.edu.cn/student/for-std/course-table*"
+      ],
+      "js": [
+        "src/catalog-data.js",
+        "src/catalog.js"
+      ],
+      "css": [
+        "src/catalog.css"
       ],
       "all_frames": true,
       "run_at": "document_idle"
