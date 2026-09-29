@@ -21,6 +21,8 @@
 #westlake-course-catalog .wsd-catalog-search input { width: min(400px, 90%); }
 #westlake-course-catalog button { border: 0; border-radius: 4px; background: #075daa; color: white; padding: 7px 12px; font: inherit; cursor: pointer; }
 #westlake-course-catalog button:disabled { opacity: .55; cursor: wait; }
+#westlake-course-catalog .wsd-catalog-pagination { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+#westlake-course-catalog .wsd-catalog-pagination button:disabled { cursor: default; }
 #westlake-course-catalog input:disabled { opacity: .55; }
 #westlake-course-catalog button:hover:enabled { background: #034982; }
 #westlake-course-catalog :focus-visible { outline: 3px solid #de9c30; outline-offset: 2px; }

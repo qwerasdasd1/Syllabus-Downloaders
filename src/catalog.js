@@ -37,9 +37,14 @@
   const content = root.querySelector("#wsd-catalog-content");
   const status = root.querySelector('[role="status"]');
   const results = root.querySelector(".wsd-catalog-results");
+  const PAGE_SIZE = 40;
   let lessons = [];
+  let currentPage = 1;
   let controller;
   let syllabusController;
+  const pagers = [createPager("课程列表顶部分页"), createPager("课程列表底部分页")];
+  results.before(pagers[0].nav);
+  results.after(pagers[1].nav);
 
   function cell(tag, text) {
     const node = document.createElement(tag);
@@ -47,10 +52,55 @@
     return node;
   }
 
+  function createPager(label) {
+    const nav = document.createElement("nav");
+    nav.className = "wsd-catalog-pagination";
+    nav.setAttribute("aria-label", label);
+    nav.hidden = true;
+    const previous = cell("button", "上一页");
+    const next = cell("button", "下一页");
+    previous.type = next.type = "button";
+    const pageLabel = cell("label", "页码 ");
+    const select = document.createElement("select");
+    pageLabel.append(select);
+    nav.append(previous, pageLabel, next);
+    function changePage(page) {
+      currentPage = page;
+      render();
+      if (nav === pagers[1].nav) {
+        content.scrollIntoView({ block: "start" });
+        pagers[0].select.focus({ preventScroll: true });
+      }
+    }
+    previous.addEventListener("click", () => changePage(currentPage - 1));
+    next.addEventListener("click", () => changePage(currentPage + 1));
+    select.addEventListener("change", () => changePage(Number(select.value)));
+    return { nav, previous, next, select };
+  }
+
+  function updatePagers(totalPages, totalLessons) {
+    for (const { nav, previous, next, select } of pagers) {
+      nav.hidden = totalLessons <= PAGE_SIZE;
+      previous.disabled = currentPage === 1;
+      next.disabled = currentPage === totalPages;
+      if (select.options.length !== totalPages) {
+        select.replaceChildren();
+        for (let page = 1; page <= totalPages; page++) {
+          const option = cell("option", `第 ${page} / ${totalPages} 页`);
+          option.value = String(page);
+          select.append(option);
+        }
+      }
+      select.value = String(currentPage);
+    }
+  }
+
   catalogSelect.addEventListener("change", () => {
     controller?.abort();
     syllabusController?.abort();
     lessons = [];
+    currentPage = 1;
+    updatePagers(1, 0);
     results.replaceChildren();
     queryInput.value = "";
     queryInput.disabled = true;
@@ -63,9 +113,13 @@
     syllabusController?.abort();
     results.replaceChildren();
     const matches = api.filterLessons(lessons, queryInput.value);
-    status.textContent = matches.length > 40
-      ? `找到 ${matches.length} 个教学班，显示前 40 个。输入更具体的名称、代码或教师可缩小范围。`
-      : `找到 ${matches.length} 个教学班。`;
+    const totalPages = Math.max(1, Math.ceil(matches.length / PAGE_SIZE));
+    currentPage = Math.max(1, Math.min(currentPage, totalPages));
+    const start = (currentPage - 1) * PAGE_SIZE;
+    updatePagers(totalPages, matches.length);
+    status.textContent = matches.length
+      ? `找到 ${matches.length} 个教学班，显示第 ${start + 1}–${Math.min(start + PAGE_SIZE, matches.length)} 个。`
+      : "找到 0 个教学班。";
     if (!matches.length) return;
 
     const table = document.createElement("table");
@@ -78,7 +132,7 @@
     const head = document.createElement("thead");
     head.append(header);
     const body = document.createElement("tbody");
-    for (const lesson of matches.slice(0, 40)) {
+    for (const lesson of matches.slice(start, start + PAGE_SIZE)) {
       const row = document.createElement("tr");
       row.append(cell("td", `${lesson.courseName.replaceAll("|", " / ")}\n${lesson.courseCode}`));
       row.append(cell("td", `${lesson.lessonCode || ""}\n${(lesson.teacherName || "未列出任课教师").replaceAll("|", " / ")}`));
@@ -131,6 +185,8 @@
     submit.disabled = true;
     queryInput.disabled = true;
     lessons = [];
+    currentPage = 1;
+    updatePagers(1, 0);
     results.replaceChildren();
     content.hidden = false;
     status.textContent = "正在加载课程目录…";
@@ -146,7 +202,10 @@
       if (!request.signal.aborted) submit.disabled = false;
     }
   });
-  queryInput.addEventListener("input", render);
+  queryInput.addEventListener("input", () => {
+    currentPage = 1;
+    render();
+  });
   window.addEventListener("pagehide", () => {
     controller?.abort();
     syllabusController?.abort();
